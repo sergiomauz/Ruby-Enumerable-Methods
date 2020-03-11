@@ -25,8 +25,15 @@ module Enumerable
         narray
     end
 
-    def my_all?()
-
+    def my_all?
+        r = true
+        self.my_each do |v| 
+            if !yield(v)
+                r = false
+                break
+            end
+        end
+        r
     end
 
     def my_any?()
@@ -53,9 +60,3 @@ module Enumerable
 
     end
 end
-
-a = [-2, 2, 4, 0, -1]
-b = a.my_select do |v|
-    v > 0
-end
-p b
