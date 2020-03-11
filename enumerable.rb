@@ -1,20 +1,22 @@
 module Enumerable
-    def my_each(arr)  
-        if !arr.nil?
+    def my_each
             i = 0
-            while i < arr.length
-                yield(arr[i])
+            while i < self.length
+                yield(self[i])
+                i+=1
+            end
+    end
+    
+    def my_each_with_index
+            i = 0
+            while i < self.length
+                yield(i, self[i])
                 i += 1
-            end    
-        end
+            end
     end
 
-    def my_each_with_index(arr)
-
-    end
-
-    def my_select()
-
+    def my_select       
+       
     end
 
     def my_all?()
@@ -45,3 +47,4 @@ module Enumerable
 
     end
 end
+
