@@ -36,17 +36,44 @@ module Enumerable
 
   def my_select
     if is_a?(Array)
-      new_array = []
-      my_each do |v|
-        new_array << v if yield(v)
-      end
-      new_array
+      items_selected = []
+      my_each { |v|
+        items_selected << v if yield(v)
+      }      
     else
-      new_hash = Hash[]
-      my_each do |k, v|
-        new_hash[k] = v if yield(k, v)
-      end
-      new_hash
+      items_selected = Hash[]
+      my_each { |k, v|
+        items_selected[k] = v if yield(k, v)
+      }      
     end
+    items_selected
   end
+
+  def my_all?
+    answer = true
+    my_each { |v|
+      unless yield(v)
+        answer = false
+        break
+      end
+    }
+    answer
+  end
+
+  def my_any?
+    answer = false
+    my_each { |v|
+      if yield(v)
+        answer = true
+        break
+      end
+    }
+    answer
+  end
+
+  
 end
+
+
+
+
