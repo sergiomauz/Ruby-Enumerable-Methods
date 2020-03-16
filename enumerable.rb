@@ -89,9 +89,12 @@ module Enumerable
     end
     count
   end
-end
 
-a = [3,2,1,6,8,0]
-#a = Hash["A" => 1, "B" => 2]
-b = a.my_count
-p b
+  def my_map
+    new_array = []
+    my_each do |v| 
+      new_array.push(yield(v))
+    end
+    new_array
+  end
+end
