@@ -92,9 +92,45 @@ module Enumerable
 
   def my_map
     new_array = []
-    my_each do |v| 
+    my_each do |v|
       new_array.push(yield(v))
     end
     new_array
   end
+
+  def my_inject(p_one = nil, p_two = nil)
+    arr = is_a?(Array) ? self : to_a
+    sym = p_one if p_one.is_a?(Symbol) || p_one.is_a?(String)
+    acc = p_one if p_one.is_a? Integer
+
+    if p_one.is_a?(Integer)
+      if p_two.is_a?(Symbol) || p_two.is_a?(String)
+        sym = p_two
+      elsif !block_given?
+        raise "#{p_two} is not a symbol nor a string"
+      end
+    elsif p_one.is_a?(Symbol) || p_one.is_a?(String)
+      raise "#{p_two} is not a symbol nor a string" if !p_two.is_a?(Symbol) && !p_two.nil?
+
+      raise "undefined method `#{p_two}' for :#{p_two}:Symbol" if p_two.is_a?(Symbol) && !p_two.nil?
+    end
+
+    if sym
+      arr.my_each { |curr| acc = acc ? acc.send(sym, curr) : curr }
+    elsif block_given?
+      arr.my_each { |curr| acc = acc ? yield(acc, curr) : curr }
+    else
+      raise 'no block given'
+    end
+    acc
+  end
+
+  def multiply_els(arr)
+    arr.my_inject { |acc, curr| acc * curr }
+  end
 end
+
+a = Hash["A" => 1, "B" => 2, "C" => 3]
+b = a.to_a
+p b[1]
+
