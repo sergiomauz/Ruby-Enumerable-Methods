@@ -99,38 +99,32 @@ module Enumerable
   end
 
   def my_inject(p_one = nil, p_two = nil)
-    arr = is_a?(Array) ? self : to_a
-    sym = p_one if p_one.is_a?(Symbol) || p_one.is_a?(String)
-    acc = p_one if p_one.is_a? Integer
+    eval_array = is_a?(Array) ? self : to_a
 
-    if p_one.is_a?(Integer)
-      if p_two.is_a?(Symbol) || p_two.is_a?(String)
-        sym = p_two
-      elsif !block_given?
-        raise "#{p_two} is not a symbol nor a string"
-      end
-    elsif p_one.is_a?(Symbol) || p_one.is_a?(String)
-      raise "#{p_two} is not a symbol nor a string" if !p_two.is_a?(Symbol) && !p_two.nil?
-
-      raise "undefined method `#{p_two}' for :#{p_two}:Symbol" if p_two.is_a?(Symbol) && !p_two.nil?
+    if p_one.nil? && p_two.nil?
+      sym = nil
+      memo_accumulator = nil
+    elsif !p_one.nil? && p_two.nil?
+      p_one.is_a?(Symbol) ? sym = p_one : memo_accumulator = p_one
+    elsif !p_one.nil? && !p_two.nil?
+      memo_accumulator = p_one
+      sym = p_two
+    else
+      raise "Undefined method `#{p_two}' for nil:NilClass"
     end
 
-    if sym
-      arr.my_each { |curr| acc = acc ? acc.send(sym, curr) : curr }
+    if !sym.nil?
+      eval_array.my_each { |v| memo_accumulator = memo_accumulator ? memo_accumulator.send(sym, v) : v }
     elsif block_given?
-      arr.my_each { |curr| acc = acc ? yield(acc, curr) : curr }
+      eval_array.my_each { |v| memo_accumulator = memo_accumulator ? yield(memo_accumulator, v) : v }
     else
       raise 'no block given'
     end
-    acc
-  end
 
-  def multiply_els(arr)
-    arr.my_inject { |acc, curr| acc * curr }
+    memo_accumulator
   end
 end
 
-a = Hash["A" => 1, "B" => 2, "C" => 3]
-b = a.to_a
-p b[1]
-
+def multiply_els(arr)
+  arr.my_inject { |memo, val| memo * val }
+end
