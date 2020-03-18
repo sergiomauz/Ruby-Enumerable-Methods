@@ -39,18 +39,22 @@ module Enumerable
   end
 
   def my_select
-    if is_a?(Array)
-      items_selected = []
-      my_each do |v|
-        items_selected << v if yield(v)
+    if block_given?
+      if is_a?(Array)
+        items_selected = []
+        my_each do |v|
+          items_selected << v if yield(v)
+        end
+      else
+        items_selected = Hash[]
+        my_each do |k, v|
+          items_selected[k] = v if yield(k, v)
+        end
       end
+      items_selected
     else
-      items_selected = Hash[]
-      my_each do |k, v|
-        items_selected[k] = v if yield(k, v)
-      end
+      to_enum(:my_select)
     end
-    items_selected
   end
 
   def my_all?
