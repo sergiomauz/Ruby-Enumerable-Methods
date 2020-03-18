@@ -20,20 +20,22 @@ module Enumerable
   end
 
   def my_each_with_index(&codeb)
-    return to_enum(:my_each_with_index) unless block_given?
-
-    i = 0
-    while i < length
-      if is_a?(Array)
-        yield(self[i], i)
-      elsif codeb.arity == 1
-        yield(assoc keys[i])
-      else
-        yield([keys[i], self[keys[i]]], i)
+    if block_given?
+      i = 0
+      while i < length
+        if is_a?(Array)
+          yield(self[i], i)
+        elsif codeb.arity == 1
+          yield(assoc keys[i])
+        else
+          yield([keys[i], self[keys[i]]], i)
+        end
+        i += 1
       end
-      i += 1
+      self
+    else
+      to_enum(:my_each_with_index)
     end
-    self
   end
 
   def my_select
@@ -130,4 +132,3 @@ end
 def multiply_els(arr)
   arr.my_inject { |memo, val| memo * val }
 end
-
