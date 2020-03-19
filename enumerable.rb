@@ -42,8 +42,8 @@ module Enumerable
     if block_given?
       if is_a?(Array)
         items_selected = []
-        my_each do |v|
-          items_selected << v if yield(v)
+        my_each do |item|
+          items_selected.push(item) if yield(item)
         end
       else
         items_selected = Hash[]
@@ -60,22 +60,22 @@ module Enumerable
   def my_all?(*args)
     answer = true
     if !args[0].nil?
-      my_each do |v|
-        unless args[0] == v
+      my_each do |item|
+        unless args[0] == item
           answer = false
           break
         end
       end
     elsif block_given?
-      my_each do |v|
-        unless yield(v)
+      my_each do |item|
+        unless yield(item)
           answer = false
           break
         end
       end
     else
-      my_each do |v|
-        unless v
+      my_each do |item|
+        unless item
           answer = false
           break
         end
@@ -87,27 +87,27 @@ module Enumerable
   def my_any?(p_one = nil)
     answer = false
     if !p_one.nil?
-      my_each do |v|
+      my_each do |item|
         if p_one.is_a?(Regexp)
-          if v.match(p_one)
+          if item.match(p_one)
             answer = true
             break
           end
-        elsif p_one == v || v.is_a?(p_one)
+        elsif p_one == item || item.is_a?(p_one)
           answer = true
           break
         end
       end
     elsif block_given?
-      my_each do |v|
-        if yield(v)
+      my_each do |item|
+        if yield(item)
           answer = true
           break
         end
       end
     else
-      my_each do |v|
-        if v
+      my_each do |item|
+        if item
           answer = true
           break
         end
@@ -138,8 +138,8 @@ module Enumerable
   def my_map(&proc)
     if block_given? && proc.arity <= 1
       new_array = []
-      my_each do |v|
-        new_array.push(yield(v))
+      my_each do |item|
+        new_array.push(yield(item))
       end
       new_array
     else
@@ -163,9 +163,9 @@ module Enumerable
     end
 
     if !sym.nil?
-      eval_array.my_each { |v| memo_accumulator = memo_accumulator ? memo_accumulator.send(sym, v) : v }
+      eval_array.my_each { |item| memo_accumulator = memo_accumulator ? memo_accumulator.send(sym, item) : item }
     elsif block_given?
-      eval_array.my_each { |v| memo_accumulator = memo_accumulator ? yield(memo_accumulator, v) : v }
+      eval_array.my_each { |item| memo_accumulator = memo_accumulator ? yield(memo_accumulator, item) : item }
     else
       raise 'no block given'
     end
