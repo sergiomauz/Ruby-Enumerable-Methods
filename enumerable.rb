@@ -57,53 +57,94 @@ module Enumerable
     end
   end
 
-  def my_all?
+  def my_all?(*args)
     answer = true
-    my_each do |v|
-      unless yield(v)
-        answer = false
-        break
+    if !args[0].nil?
+      my_each do |v|
+        unless args[0] == v
+          answer = false
+          break
+        end
+      end
+    elsif block_given?
+      my_each do |v|
+        unless yield(v)
+          answer = false
+          break
+        end
+      end
+    else
+      my_each do |v|
+        unless v
+          answer = false
+          break
+        end
       end
     end
     answer
   end
 
-  def my_any?
+  def my_any?(p_one = nil)
     answer = false
-    my_each do |v|
-      if yield(v)
-        answer = true
-        break
+    if !p_one.nil?
+      my_each do |v|
+        if p_one.is_a?(Regexp)
+          if v.match(p_one)
+            answer = true
+            break
+          end
+        elsif p_one == v || v.is_a?(p_one)
+          answer = true
+          break
+        end
+      end
+    elsif block_given?
+      my_each do |v|
+        if yield(v)
+          answer = true
+          break
+        end
+      end
+    else
+      my_each do |v|
+        if v
+          answer = true
+          break
+        end
       end
     end
     answer
   end
 
-  def my_none?
-    answer = true
-    my_each do |v|
-      if yield(v)
-        answer = false
-        break
-      end
-    end
-    answer
+  def my_none?(p_one = nil, &block)
+    !my_any?(p_one, &block)
   end
 
-  def my_count
+  def my_count(p_one = nil)
     count = 0
-    my_each do
-      count += 1
+    if p_one.nil? && block_given?
+      my_each { |k| count += 1 if yield(k) }
+    elsif !p_one.nil? && !block_given?
+      my_each { |k| count += 1 if k == p_one }
+    elsif !p_one.nil? && block_given?
+      raise 'given block not used'
+    else
+      my_each { count += 1 }
     end
+
     count
   end
 
-  def my_map
-    new_array = []
-    my_each do |v|
-      new_array.push(yield(v))
+  def my_map(&proc)
+    if block_given? && proc.arity <= 1
+      new_array = []
+      my_each do |v|
+        new_array.push(yield(v))
+      end
+      new_array
+    else
+      to_enum(:my_map)
     end
-    new_array
   end
 
   def my_inject(p_one = nil, p_two = nil)
