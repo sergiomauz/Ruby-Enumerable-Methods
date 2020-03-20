@@ -77,35 +77,22 @@ module Enumerable
   end
 
   def my_any?(p_one = nil)
-    answer = false
-    if !p_one.nil?
-      my_each do |item|
-        if p_one.is_a?(Regexp)
-          if item.match(p_one)
-            answer = true
-            break
-          end
-        elsif p_one == item || item.is_a?(p_one)
-          answer = true
-          break
-        end
-      end
-    elsif block_given?
-      my_each do |item|
-        if yield(item)
-          answer = true
-          break
-        end
-      end
-    else
-      my_each do |item|
-        if item
-          answer = true
-          break
-        end
+    my_each do |item|
+      if !p_one.nil?
+        if p_one.is_a?(Regexp) 
+          return true if item.match(p_one) 
+        elsif p_one.is_a?(Class)          
+          return true if item.is_a?(p_one)
+        else
+          return true if item == p_one
+        end                
+      elsif block_given?
+        return true if yield(item)
+      else
+        return true if item
       end
     end
-    answer
+    false
   end
 
   def my_none?(p_one = nil, &block)
