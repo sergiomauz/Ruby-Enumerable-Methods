@@ -58,30 +58,22 @@ module Enumerable
   end
 
   def my_all?(*args)
-    answer = true
-    if !args[0].nil?
-      my_each do |item|
-        unless args[0] == item
-          answer = false
-          break
-        end
-      end
-    elsif block_given?
-      my_each do |item|
-        unless yield(item)
-          answer = false
-          break
-        end
-      end
-    else
-      my_each do |item|
-        unless item
-          answer = false
-          break
-        end
+    my_each do |item|
+      if !args[0].nil?
+        if args[0].is_a?(Regexp) 
+          return false unless item.match(args[0]) 
+        elsif args[0].is_a?(Class)          
+          return false unless item.is_a?(args[0])
+        else
+          return false unless item == args[0]
+        end                
+      elsif block_given?
+        return false unless yield(item)
+      else
+        return false unless item
       end
     end
-    answer
+    true
   end
 
   def my_any?(p_one = nil)
