@@ -114,17 +114,19 @@ module Enumerable
     count
   end
 
-  def my_map(&proc)
-    if block_given? && proc.arity <= 1
-      new_array = []
-      my_each do |item|
-        new_array.push(yield(item))
-      end
-      new_array
+  def my_map(proc = nil)
+    ary = is_a?(Array) ? self : to_a
+    new_array = []
+
+    if !proc.nil?
+      ary.my_each { |item| new_array.push(proc.call(item)) }
+    elsif block_given?
+      ary.my_each { |item| new_array.push(yield(item)) }      
     else
-      to_enum(:my_map)
+      return to_enum(:my_map)
     end
-  end
+    new_array
+  end  
 
   def my_inject(p_one = nil, p_two = nil)
     eval_array = is_a?(Array) ? self : to_a
@@ -153,6 +155,6 @@ module Enumerable
   end
 end
 
-def multiply_els(arr)
-  arr.my_inject { |memo, val| memo * val }
+def multiply_els(ary)
+  ary.my_inject { |memo, val| memo * val }
 end
