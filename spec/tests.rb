@@ -22,4 +22,22 @@ RSpec.describe Enumerable do
       expect(hash_numbers.my_each).to be_kind_of(Enumerator)
     end
   end
+
+  describe '#my_each_with_index' do
+    it 'If we pass an array with a block, it will returns the same array' do
+      expect(array_numbers.my_each_with_index {}).to eql(array_numbers)
+    end
+
+    it 'If we pass a hash with a block, it will returns the same hash' do
+      expect(hash_numbers.my_each_with_index {}).to eql(hash_numbers)
+    end
+
+    it 'If we pass an array without a block, it will returns a kind of Enumerator' do
+      expect(array_numbers.my_each_with_index).to be_kind_of(Enumerator)
+    end
+
+    it 'If we pass hash without a block, it will returns a kind of Enumerator' do
+      expect(hash_numbers.my_each_with_index).to be_kind_of(Enumerator)
+    end
+  end
 end
