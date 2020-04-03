@@ -10,6 +10,7 @@ RSpec.describe Enumerable do
   strings_array = %w[ant bear cat]
   empty_array = []
 
+  array_number_condition = array_numbers.count { |x| x.even? }
   array_numbers_select = array_numbers.select { |num| num.even? }
   hash_numbers_select = hash_numbers.select { |key, val| val.even? && key.class == String }
   array_classes_select = array_classes.select { |val| val == :foo }
@@ -25,6 +26,9 @@ RSpec.describe Enumerable do
   mixing_values_none = mixing_values.none?
   strings_array_none = strings_array.none?(regular_expression)
   empty_array_none = empty_array.none?
+  array_numbers_count = array_numbers.count
+  array_numbers_count_arg = array_numbers.count(Numeric)
+  hash_numbers_count = hash_numbers.count
 
   describe '#my_each' do
     it 'If we pass an array with a block, it will returns the same array' do
@@ -135,6 +139,24 @@ RSpec.describe Enumerable do
 
     it 'If the block is not given for an empty array, it returns TRUE' do
       expect(empty_array.my_none?).to eql(empty_array_none)
+    end
+  end
+
+  describe '#my_count' do
+    it 'if it is used in an array without any arguments it returns the number of items in the collection' do
+      expect(array_numbers.my_count).to eql(array_numbers_count)
+    end
+
+    it 'If it is used in an array with an argument, it returns the number of times the argument repeats in the collection' do
+      expect(array_numbers.my_count(Numeric)).to eql(array_numbers_count_arg)
+    end
+
+    it 'If the block is given it returns the number of times the conditio is true' do
+      expect(array_numbers.my_count { |x| x.even? }).to eql(array_number_condition)
+    end
+
+    it 'if it is used in an HASH without any arguments it returns the number of items in the collection' do
+      expect(hash_numbers.my_count).to eql(hash_numbers_count)
     end
   end
 end
