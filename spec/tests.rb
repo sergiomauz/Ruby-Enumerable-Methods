@@ -31,6 +31,10 @@ RSpec.describe Enumerable do
   hash_numbers_count = hash_numbers.count
   array_numbers_map = array_numbers.map { |num| num * num }
   strings_array_map = strings_array.map { |str| str + ' ' + str }
+  array_numbers_inject1 = array_numbers.inject(:+)
+  array_numbers_inject2 = array_numbers.inject(1) { |product, n| product * n }
+  strings_array_inject = strings_array.inject { |memo, word| memo.length > word.length ? memo : word }
+  array_numbers_multiply_els = array_numbers.inject(1) { |memo, val| memo * val }
 
   describe '#my_each' do
     it 'If we pass an array with a block, it will returns the same array' do
@@ -169,6 +173,26 @@ RSpec.describe Enumerable do
 
     it 'it returns a new array with the result of running block for each element.' do
       expect(strings_array.my_map { |str| str + ' ' + str }).to eql(strings_array_map)
+    end
+  end
+
+  describe '#my_inject' do
+    it 'It combines all elements of the enum by applying a symbol that names a method or operator.' do
+      expect(array_numbers.my_inject(:+)).to eql(array_numbers_inject1)
+    end
+
+    it 'It combines all elements of the enum by applying a block that names a method or operator. Takes the parameter of the method as a initial value and the first parameter of the block as accumulator.' do
+      expect(array_numbers.my_inject(1) { |product, n| product * n }).to eql(array_numbers_inject2)
+    end
+
+    it 'It combines all elements of the enum by applying a block that names a method or operator. Takes the first parameter of the block as memo variable.' do
+      expect(strings_array.my_inject { |memo, word| memo.length > word.length ? memo : word }).to eql(strings_array_inject)
+    end
+  end
+
+  describe '#multiply_els' do
+    it 'It combines all elements multiply.' do
+      expect(multiply_els(array_numbers)).to eql(array_numbers_multiply_els)
     end
   end
 end
