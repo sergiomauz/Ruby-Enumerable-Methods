@@ -29,6 +29,8 @@ RSpec.describe Enumerable do
   array_numbers_count = array_numbers.count
   array_numbers_count_arg = array_numbers.count(Numeric)
   hash_numbers_count = hash_numbers.count
+  array_numbers_map = array_numbers.map { |num| num * num }
+  strings_array_map = strings_array.map { |str| str + ' ' + str }
 
   describe '#my_each' do
     it 'If we pass an array with a block, it will returns the same array' do
@@ -157,6 +159,16 @@ RSpec.describe Enumerable do
 
     it 'if it is used in an HASH without any arguments it returns the number of items in the collection' do
       expect(hash_numbers.my_count).to eql(hash_numbers_count)
+    end
+  end
+
+  describe '#my_map' do
+    it 'it returns a new array with the result of running block for each element.' do
+      expect(array_numbers.my_map { |num| num * num }).to eql(array_numbers_map)
+    end
+
+    it 'it returns a new array with the result of running block for each element.' do
+      expect(strings_array.my_map { |str| str + ' ' + str }).to eql(strings_array_map)
     end
   end
 end
