@@ -17,6 +17,10 @@ RSpec.describe Enumerable do
   mixing_values_all = mixing_values.all?
   strings_array_all = strings_array.all?(regular_expression)
   empty_array_all = empty_array.all?
+  array_numbers_any = array_numbers.any?(Numeric)
+  mixing_values_any = mixing_values.any?
+  strings_array_any = strings_array.any?(regular_expression)
+  empty_array_any = empty_array.any?
 
   describe '#my_each' do
     it 'If we pass an array with a block, it will returns the same array' do
@@ -89,8 +93,26 @@ RSpec.describe Enumerable do
       expect(strings_array.my_all?(regular_expression)).to eql(strings_array_all)
     end
 
-    it 'If the block is not given for a regular expression, it returns TRUE if all elements in the array match with the pattern' do
+    it 'If the block is not given for an empty array, it returns TRUE' do
       expect(empty_array.my_all?).to eql(empty_array_all)
+    end
+  end
+
+  describe '#my_any?' do
+    it 'if an element in an array is true in comparison to the block condition, the method returns TRUE, else FALSE' do
+      expect(array_numbers.my_any?(Numeric)).to eql(array_numbers_any)
+    end
+
+    it 'If the block is not given for a hash or array, it returns TRUE if at least one of the collection members is not false or nil.' do
+      expect(mixing_values.my_any?).to eql(mixing_values_any)
+    end
+
+    it 'If the block is not given for a regular expression, it returns TRUE if one of the element in the array match with the pattern' do
+      expect(strings_array.my_any?(regular_expression)).to eql(strings_array_any)
+    end
+
+    it 'If the block is not given for an empty array, it returns FALSE' do
+      expect(empty_array.my_any?).to eql(empty_array_any)
     end
   end
 end
